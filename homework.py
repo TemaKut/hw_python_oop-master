@@ -1,34 +1,36 @@
 from dataclasses import dataclass, field, asdict
+from typing import ClassVar
 
 
 @dataclass
 class InfoMessage:
     """Информационное сообщение о тренировке."""
+    message: ClassVar[str] = ('Тип тренировки: {}; '
+                              'Длительность: {:.3f} ч.; '
+                              'Дистанция: {:.3f} км; '
+                              'Ср. скорость: {:.3f} км/ч; '
+                              'Потрачено ккал: {:.3f}.')
     training_type: str
     duration: float
     distance: float
     speed: float
     calories: float
-    MESSAGE: str = ('Тип тренировки: {}; '
-                    'Длительность: {:=.3f} ч.; '
-                    'Дистанция: {:=.3f} км; '
-                    'Ср. скорость: {:=.3f} км/ч; '
-                    'Потрачено ккал: {:=.3f}.')
 
     def get_message(self) -> str:
         """Метод возврата результата тренировки."""
-        return self.MESSAGE.format(*asdict(self).values())
+        return self.message.format(*asdict(self).values())
 
 
 @dataclass
 class Training:
     """Базовый класс тренировки."""
+
+    LEN_STEP: ClassVar[float] = field(default=0.65, init=False)
+    M_IN_KM: ClassVar[int] = field(default=1000, init=False)
+    MPH: ClassVar[int] = field(default=60, init=False)
     action: int
     duration: float
     weight: float
-    LEN_STEP: float = field(default=0.65, init=False)
-    M_IN_KM: int = field(default=1000, init=False)
-    MPH: int = field(default=60, init=False)
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
@@ -52,23 +54,25 @@ class Training:
 
 class Running(Training):
     """Тренировка: бег."""
-    SPEED_MULTIPLIER_1: float = 18
-    SPEED_MULTIPLIER_2: float = 20
+
+    SPEED_MULTIPLIER_1: ClassVar[float] = 18
+    SPEED_MINUS: ClassVar[float] = 20
 
     def get_spent_calories(self):
         """Получить количество затраченных калорий."""
         return ((self.SPEED_MULTIPLIER_1 * self.get_mean_speed()
-                 - self.SPEED_MULTIPLIER_2)
+                 - self.SPEED_MINUS)
                 * self.weight / self.M_IN_KM * self.duration * self.MPH)
 
 
 @dataclass
 class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
+
+    SW_COEFF_1: ClassVar[float] = 0.035
+    SW_COEFF_2: ClassVar[float] = 2
+    SW_COEFF_3: ClassVar[float] = 0.029
     height: float
-    SW_COEFF_1: float = 0.035
-    SW_COEFF_2: float = 2
-    SW_COEFF_3: float = 0.029
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
@@ -80,11 +84,12 @@ class SportsWalking(Training):
 @dataclass
 class Swimming(Training):
     """Тренировка: плавание."""
+
+    LEN_STEP: ClassVar[float] = field(default=1.38, init=False)
+    SWM_COEFF_1: ClassVar[float] = 1.1
+    SWM_COEFF_2: ClassVar[float] = 2
     length_pool: float
     count_pool: float
-    LEN_STEP: float = field(default=1.38, init=False)
-    SWM_COEFF_1: float = 1.1
-    SWM_COEFF_2: float = 2
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
