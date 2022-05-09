@@ -9,7 +9,7 @@ class InfoMessage:
     distance: float
     speed: float
     calories: float
-    mess: str = ('Тип тренировки: {}; '
+    MESS: str = ('Тип тренировки: {}; '
                  'Длительность: {:=.3f} ч.; '
                  'Дистанция: {:=.3f} км; '
                  'Ср. скорость: {:=.3f} км/ч; '
@@ -18,7 +18,7 @@ class InfoMessage:
     def get_message(self) -> str:
         """Метод возврата результата тренировки."""
 
-        return self.mess.format(*asdict(self).values())
+        return self.MESS.format(*asdict(self).values())
 
 
 @dataclass
@@ -34,7 +34,6 @@ class Training:
 
     def get_distance(self) -> float:
         """Получить дистанцию в км."""
-
         return self.action * self.LEN_STEP / self.M_IN_KM
 
     def get_mean_speed(self) -> float:
@@ -65,8 +64,7 @@ class Running(Training):
         """Получить количество затраченных калорий."""
 
         return ((self.RUN1 * self.get_mean_speed() - self.RUN2)
-                * self.weight / self.M_IN_KM * self.duration * self.MPH
-                )
+                * self.weight / self.M_IN_KM * self.duration * self.MPH)
 
 
 @dataclass
@@ -74,16 +72,16 @@ class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
 
     height: float
-    SW1: float = 0.035
-    SW2: float = 2
-    SW3: float = 0.029
+    SW_COEFF_1: float = 0.035
+    SW_COEFF_2: float = 2
+    SW_COEFF_3: float = 0.029
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
 
-        return ((self.SW1 * self.weight
-                 + (self.get_mean_speed() ** self.SW2 // self.height)
-                 * self.SW3 * self.weight) * self.duration
+        return ((self.SW_COEFF_1 * self.weight
+                 + (self.get_mean_speed() ** self.SW_COEFF_2 // self.height)
+                 * self.SW_COEFF_3 * self.weight) * self.duration
                 * self.MPH
                 )
 
@@ -135,7 +133,7 @@ if __name__ == '__main__':
     packages = [
         ('SWM', [720, 1, 80, 25, 40]),
         ('RUN', [15000, 1, 75]),
-        ('WLK', [9000, 1, 75, 180])
+        ('WLK', [9000, 1, 75, 180],)
     ]
 
     for workout_type, data in packages:
