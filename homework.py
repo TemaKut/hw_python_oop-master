@@ -70,16 +70,16 @@ class Running(Training):
 class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
 
-    SW_MULTIPLIER_1: ClassVar[float] = 0.035
-    SW_DEGREE: ClassVar[float] = 2
-    SW_MULTIPLIER_2: ClassVar[float] = 0.029
+    WEIGHT_MULTIPLIER_1: ClassVar[float] = 0.035
+    SPEED_DEGREE: ClassVar[float] = 2
+    WEIGHT_MULTIPLIER_2: ClassVar[float] = 0.029
     height: float
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        return ((self.SW_MULTIPLIER_1 * self.weight
-                + (self.get_mean_speed() ** self.SW_DEGREE // self.height)
-                * self.SW_MULTIPLIER_2 * self.weight)
+        return ((self.WEIGHT_MULTIPLIER_1 * self.weight
+                + (self.get_mean_speed() ** self.SPEED_DEGREE // self.height)
+                * self.WEIGHT_MULTIPLIER_2 * self.weight)
                 * self.duration * self.MIN_IN_H)
 
 
@@ -88,8 +88,8 @@ class Swimming(Training):
     """Тренировка: плавание."""
 
     LEN_STEP: ClassVar[float] = 1.38
-    SWM_SUMM: ClassVar[float] = 1.1
-    SWM_MULTIPLIER: ClassVar[float] = 2
+    SPEED_SUMM: ClassVar[float] = 1.1
+    WEIGHT_MULTIPLIER: ClassVar[float] = 2
     length_pool: float
     count_pool: float
 
@@ -100,8 +100,8 @@ class Swimming(Training):
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        return ((self.get_mean_speed() + self.SWM_SUMM)
-                * self.SWM_MULTIPLIER * self.weight)
+        return ((self.get_mean_speed() + self.SPEED_SUMM)
+                * self.WEIGHT_MULTIPLIER * self.weight)
 
 
 def read_package(workout_type: str, data: list) -> Training:
